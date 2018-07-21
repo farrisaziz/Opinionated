@@ -1,0 +1,189 @@
+<div class="container">
+	<div class="row">
+		<div class="col s12 m9">
+		{{#each news}}
+		  <div class="card hoverable blue-grey darken-1">
+		  	<a href="{{article}}">
+			    <div class="card-image">
+			      {{#if img.url}}
+			      <img src="{{img.url}}" data-credit="{{img.credit}}" title="{{img.credit}}">
+			      {{/if}}
+			      <span class="card-title">{{headline}}</span>
+			    </div>
+			    {{#if img.credit}}
+			    <span class="credit">{{img.credit}}</span>
+			    {{/if}}
+			    {{#if byline}}
+			    <span class="credit">By {{byline}}</span>
+			    {{/if}}
+		    </a>
+		    {{#if summary}}
+			<a class="content-link" href="{{article}}">
+				<div class="card-content">
+					<p>{{summary}}</p>
+				</div>
+			</a>
+			{{/if}}
+		    <div class="card-action">
+		      <a href="{{article}}">View Article</a>
+		      <button data-target="commentsModal" class="btn viewComments modal-trigger" data-article-id="{{_id}}" data-article-header="{{headline}}">View Comments</button>
+		    </div>
+		    <i class="close-icon white-text material-icons right show-on-small" data-article-id="{{_id}}">close</i>
+		  </div>
+		  {{else}}
+		  	<div class="row nothing">
+		  		<div class="col no-saved-text">
+		  			<h2>No Saved Articles</h2>
+					<h4 class="hide-on-med-and-down">Click here to scrape for more news!</h4>
+		  		</div>
+		  		<img src="/images/arrow-2.png" class="arrow hide-on-med-and-down" alt="">
+		  	</div>
+		  {{/each}}
+		</div>
+	</div>
+</div>
+
+  <!-- Comments Modal -->
+  <div id="commentsModal" class="modal">
+    <div class="modal-content">
+      <div>
+      	<strong>Article ID:</strong> <span id="article-id"></span>
+      </div>
+      <h6><strong><span id="article-title"></span></strong></h6>
+      <h4>Comments</h4>
+      
+      <!-- Store comments here -->
+      <ul id="comments-list">
+      	<li>There are no comments to view</li>
+      </ul>
+      <form action="addComment" method="POST">
+      	<textarea name="noteText" id="comment-text"></textarea>
+      	<button type="submit" id="btn-addcomment" data-article-id="" class="btn">Add Comment</button>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+    </div>
+  </div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		 M.AutoInit();
+	});
+
+	// Close Article
+	$(".close-icon").on('click', function(event) {
+
+		var articleId = $(this).attr('data-article-id');
+		
+		$.ajax({
+			method: 'PUT',
+			url: `/unsave-article/${articleId}`,
+		})
+		.then(response => {
+			if(response.n > 0){
+				$(this).parent().slideUp();
+			} else {
+				console.log('Could not unsave article ' + articleId);
+			}
+		})
+		.catch(err => {
+			console.log(err.message);
+		});
+	});
+
+	// View Comments
+	$(".viewComments").on('click', function(event) {
+		var articleId = $(this).attr('data-article-id');
+		var headline = $(this).attr('data-article-header');
+
+		$("#article-id").text(articleId);
+		$("#article-title").text(headline);
+		$("#btn-addcomment").attr('data-article-id', articleId);
+
+		$.ajax({
+		  method: "GET",
+		  url: `/articles/${articleId}`
+		})
+			.then(function(article) {
+		  displayArticleAndComments(article);
+		});
+
+	});
+
+	// Add Comment
+	$("#btn-addcomment").on('click', function(event) {
+		event.preventDefault();
+
+		var comment = $("#comment-text").val().trim();
+
+		if(comment.length > 0){
+			var articleId = $(this).attr('data-article-id');
+
+			$.ajax({
+			  method: "POST",
+			  url: `/articles/${articleId}`,
+			  data: {
+			    // Value taken from title input
+			    noteText: $("#comment-text").val().trim(),
+			  }
+			})
+				.then(function(article) {
+			  displayArticleAndComments(article);
+			});			
+		}
+	});
+
+	function displayArticleAndComments(article){
+		console.log(article);
+	  $("#comment-text").val('');
+	  $("#comments-list").empty();
+	  for (var i = 0; i < article.notes.length; i++) {
+	  	var commentCard = $("<div>").addClass('commentCard valign-wrapper');
+
+	  	// create div for comment text
+	  	var commentText = $("<div>").addClass('commentText')
+	  		.text(article.notes[i].noteText);
+
+	  	// create div for comment date
+	  	var commentDate = $("<div>").addClass('commentDate')
+	  		.text(moment(article.notes[i].date).format("MMMM Do YYYY, h:mm:ss a"));
+
+	  	// create wrapper for commentText and commentDate
+	  	var commentWrapper = $("<div>").addClass('commentWrapper');
+	  	commentWrapper.append(commentText, commentDate);
+
+	  	// create close button
+	  	// <i class="close-icon white-text material-icons right" data-article-id="{{_id}}">close</i>
+	  	var closeButton = $("<i>")
+	  		.html("close")
+	  		.addClass('white-text material-icons closeComment')
+	  		.attr({
+	  			title: "delete",
+	  			"data-note-id": article.notes[i]._id
+	  		});
+
+	  	// Add elements to the comment card and then append card to the comments list
+	  	commentCard.append(commentWrapper, closeButton);
+	  	$("#comments-list").append(commentCard);
+	  }
+
+	  $(".closeComment").on('click', function(event) {
+			var noteID = $(this).attr('data-note-id');
+		
+			$.ajax({
+				method: "DELETE",
+				url: `/delete-note/${noteID}`
+			})
+			.then(response => {
+				if(response.n > 0){
+					$(this).parent().remove();
+				} else {
+					console.log('Could not remove note ' + noteID);
+				}
+			})
+		});
+	}
+
+
+</script>

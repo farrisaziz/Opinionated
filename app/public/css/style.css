@@ -1,0 +1,162 @@
+body {
+	background-color: #eee;
+}
+
+.container {
+	margin-top: 78px;
+}
+
+.mobile-scrape {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 30px;
+	padding: 17px;
+    font-size: 25px;
+    height: initial;
+}
+
+.card-image {
+	min-height: 150px;
+}
+
+.card-title {
+	width: 100%;
+}
+
+.card:hover {
+	top: -2px;
+	left: -2px;
+	box-shadow: 2px 5px 10px rgba(0,0,0,.6);
+}
+
+.card:hover .close-icon,
+.card:hover .credit {
+	opacity: 1;
+}
+
+.close-icon {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	opacity: 0;
+	transition: opacity 500ms;
+	background: rgba(0,0,0,.6);
+	cursor: pointer;
+}
+
+.close-icon:hover {
+	background: rgba(0,0,0,.6);
+}
+
+.save-icon {
+	cursor: pointer;
+	transition: transform 500ms;
+}
+
+.save-icon:not(.saved):hover {
+	transform: scale(1.5);
+	text-shadow: 1px 3px 2px rgba(0,0,0,.7);
+}
+
+.card-title {
+	/*background-color: rgba(0,0,0,.4);*/
+	background: linear-gradient(transparent 0%, rgba(0,0,0,.4) 20%);
+}
+
+.options {
+	position: fixed;
+	right: 50px;
+	width: 300px;
+	height: 180px;
+}
+
+.content-link {
+	color: #fff;
+}
+
+textarea { 
+	resize: vertical; 
+}
+
+/*Saved Page*/
+.saved-articles {
+	display: flex;
+	flex-flow: row nowrap;
+}
+
+.commentCard {
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: space-between;
+	margin-bottom: 5px;
+}
+
+.commentCard:hover {
+	background-color: #eee;
+}
+
+.commentText {
+
+}
+
+.commentDate {
+	color: #aaa;
+	font-size: .875rem;
+	font-style: italic;
+	user-select: none;
+}
+
+.closeComment {
+	cursor: pointer;
+	padding: 5px;
+	background-color: #F44336;
+	border-radius: 5px;
+	user-select: none;
+}
+
+.closeComment:hover {
+	background-color: #b71c1c;
+}
+
+.nothing {
+	position: relative;
+}
+
+.nothing .arrow {
+	position: absolute;
+	top: 0;
+	left: 0;
+	transform: rotate(-135deg);
+}
+
+.nothing .no-saved-text {
+	position: absolute;
+	top: -14px;
+    left: 253px;
+    width: 100%;
+}
+
+.nothing .no-articles {
+	position: absolute;
+    top: 50px;
+    left: 275px;
+    width: 100%;
+}
+
+/*Image Credit*/
+.credit {
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	color: #bbb;
+	background-color: rgba(0,0,0,.7);
+	opacity: 0;
+}
+
+@media only screen and (max-width: 600px) {
+	.close-icon {
+		opacity: 1;
+	}
+}

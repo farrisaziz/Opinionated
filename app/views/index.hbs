@@ -1,0 +1,80 @@
+<div class="container">
+	<div class="row">
+		<div id="articleList" class="col s12 m7">
+		{{#each news}}
+			<div class="card hoverable blue-grey darken-1">
+				<a href="{{article}}">
+				    <div class="card-image">
+				      {{#if img.url}}
+				      <img src="{{img.url}}" data-credit="{{img.credit}}" title="{{img.credit}}">
+				      {{/if}}
+				      <span class="card-title">{{headline}}</span>
+				    </div>
+				    {{#if img.credit}}
+				    <span class="credit">{{img.credit}}</span>
+				    {{/if}}
+				    {{#if byline}}
+				    <span class="credit">By {{byline}}</span>
+				    {{/if}}
+				</a>
+				{{#if summary}}
+				<a class="content-link" href="{{article}}">
+					<div class="card-content">
+						<p>{{summary}}</p>
+					</div>
+				</a>
+				{{/if}}
+				<div class="card-action">
+				  <a href="{{article}}">View Article</a>
+				  {{#if saved}}
+				  <i class="save-icon saved red-text material-icons right" data-article-id="{{_id}}" data-article-headline="{{headline}}">favorite</i>
+				  {{else}}
+				  <i class="save-icon black-text material-icons right" data-article-id="{{_id}}" data-article-headline="{{headline}}">favorite_border</i>
+				  {{/if}}
+				</div>
+				<i class="close-icon white-text material-icons right" data-article-id="{{_id}}">close</i>
+			</div>
+		{{else}}
+			<div class="row nothing hide-on-med-and-down">
+				<h2 class="no-articles">Start Here</h4>
+				<img src="/images/arrow-2.png" class="arrow" alt="">
+			</div>
+		{{/each}}
+		</div>
+		<div class="show-on-small hide-on-med-and-up valign-wrapper">
+			<a href="/scrape-npr" class="scrape-btn btn mobile-scrape orange waves-effect wave-orange">Pull Newsfeed</a>
+		</div>
+		<div class="col s3 hide-on-small-only">
+			<div class="row">
+				<div class="card-panel center options">
+					<div class="input-field col s12">
+					    <select id="news-source">
+					      <option value="npr" data-route="/scrape-npr" selected>NPR</option>
+					      <option value="vox" data-route="/scrape-vox">Vox</option>
+					      {{!-- <option value="nyt" data-route="/scrape-nyt">New York Times</option> --}}
+					    </select>
+					    <label>Select a News Source</label>
+				  	</div>
+				  	<a id="scrape-btn-2" href="/scrape-npr" class="scrape-btn btn orange waves-effect wave-orange">Pull Newsfeed</a>
+				</div>	
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="articleCountModal" class="modal">
+    <div class="modal-content">
+      <h4 id="articleCountText">Added {{news.length}} New Articles</h4>
+    </div>
+    <div class="modal-footer">
+      <a href="#" class="modal-close waves-effect waves-teal btn">Ok</a>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+	$(".close-icon").on('click', function(event) {
+		$(this).parent().slideUp();
+	});
+
+</script>
